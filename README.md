@@ -2,11 +2,11 @@
 
 **This workshop covers the recovery of microbial genomes from metagenomics samples using [Metawrap](https://github.com/bxlab/metaWRAP/tree/master) and their functional annotation using [METABOLIC](https://github.com/AnantharamanLab/METABOLIC)**
 
-![workflow]{images/workflow.png}
+![workflow](images/workflow.png)
 
-## Setup
+# Setup
 
-### Install miniconda3 if necessary
+## Install miniconda3 if necessary
 
 Details on how to install miniconda are available [here](https://docs.anaconda.com/free/miniconda/#quick-command-line-install)
 
@@ -26,7 +26,7 @@ You will then need to add some extra channels (repositories to search for packag
 conda config --add channels conda-forge bioconda
 ```
 
-### Clone this repository to your own space on Maxwell
+## Clone this repository to your own space on Maxwell
 
 This will give you environment files and the scripts needed to run the analysis (which will be uploaded AFTER the workshop, to force you to write them yourself for now.)
 
@@ -39,7 +39,7 @@ cd /uoa/scratch/users/your-username
 git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 ```
 
-### Create the environments
+## Create the environments
 
 The `metawrap.yaml` environment file is provided to create the conda environment that contains all the packages / libraries needed to conduct microbial genome assembly from metagenomic data.
 
@@ -63,7 +63,10 @@ sbatch --nodes=1 --cpus-per-task=1 --mem-per-cpu=4G --wrap "mamba env create -y 
 
 **You should now have the environments set up to run the analyses.**
 
-## Get the Raw Data
+
+# Get the Raw Data
+
+ELLEN SUGGESTED IT MAY MAKE THE MOST SENSE TO HAVE THE FILES AT AN ACCESSIBLE LOCATION PROVIDED BY DIGITAL RESEARCH AND CAN JUST BE COPIED
 
 Run the download script to get the raw data for the analysis. Do not worry about understanding how this step works just now, as it is unlikely to apply when using your own data.
 
@@ -72,13 +75,260 @@ sbatch Scripts/Download.sh
 ```
 
 You should end up with a directory called `RAW_READS` containing some metagenomics sequence files:
-```
-A_1.fastq
-A_2.fastq
-B_1.fastq
-B_2.fastq
+
+> A_1.fastq
+> A_2.fastq
+> B_1.fastq
+> B_2.fastq
+
+
+Verify that what you have matches the above:
+```bash
+ls -l RAW_READS
 ```
 
-## Quality Control
+*If it matches, you can now begin the pipeline, starting with some quality control*
+
+
+# Quality Control using Metawrap's Read QC module
 
 Before we can proceed with any sort of analysis, we need to do some quality control on the data we have.
+
+We will be using the `read_qc` module of Metawrap to trim the reads. Often you might want to remove reads from a host (e.g. human), but we will be skipping that step here for simplicity as it is not required in our dataset. If you need to do it on your own data, you can find the information [here](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md).
+
+
+## Making the QC.sh submission script
+We need to create the `QC.sh` script to run read trimming on our two samples. Start by creating and opening this file in the `Scripts` subdirectory:
+```bash
+nano Scripts/QC.sh
+```
+
+You should now be inside an open empty file, which we will gradually add to in order to build up our submission script for read QC.
+
+### Adding Slurm scheduler parameters
+
+We need to tell the Slurm scheduler how much resource we want to allocate to the job. The following parameters have been optimised for this dataset. Add them to your open `QC.sh` file by copying and pasting:
+```bash
+#!/bin/bash
+
+#SBATCH --partition=uoa-compute
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --mem-per-cpu=1G
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=
+```
+*note: add in your email address after `mail-user=` in order to get email updates for the job*
+
+### Adding some description of the version the script was written for
+
+It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
+```bash
+### This was written for metawrap version 1.3.2 ###
+```
+
+### Adding code for loading miniconda and activating the correct
+Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
+```bash
+## Source own miniconda3 installation
+
+source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
+conda activate metawrap
+```
+*note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
+
+### Adding code to set the input and output directories
+It is also useful to be able to see at the top of the file what the input and output directories that the script will look for files in / output files to. This means that if you want to change the name of the output directory you only need to do it once at the top by changing the variable, and it will automatically apply to the whole script. Add the below to your open file:
+```bash
+## Set directory and file name variables
+
+InputDir=RAW_READS
+OutputDir=READ_QC
+```
+*note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
+
+### Adding the code to run Metawrap's QC module
+
+Finally you can add the code to use Metawrap to perform read trimming on your samples:
+```bash
+## QC and trim raw reads:
+mkdir -p "$OutputDir"
+metawrap read_qc -1 "$InputDir"/A_1.fastq -2 "$InputDir"/A_2.fastq -t 10 -o "$OutputDir"/A --skip-bmtagger
+metawrap read_qc -1 "$InputDir"/B_1.fastq -2 "$InputDir"/B_2.fastq -t 10 -o "$OutputDir"/B --skip-bmtagger
+```
+
+This will read in the forward reads (`-1`) and the reverse reads (`-2`) from your samples, use 10 cpu threads (`-t 10`) to perform the read QC, and then send the output files to your specified output directory (`-o`). We have used the `--skip-bmtagger` flag to skip removal of host sequences.
+
+Exit close and save the file by using Ctrl+x, then y, then Enter.
+
+## Running the QC.sh script
+
+You can now run the script as below:
+```bash
+sbatch Scripts/QC.sh
+```
+
+## Inspecting the output of Metawrap's QC module
+
+You should, once it finishes running, have an output directory called `READ_QC` that contains two subdirectories, `A` and `B`. These will each contain 2 files `final_pure_reads_1.fastq` and `final_pure_reads_2.fastq` for the trimmed forward and reverse reads respectively, and some output directories with QC reports: `pre-QC_report` and `post-QC_report`. Verify that you have these outputs using:
+```bash
+ls -l READ_QC/A
+ls -l READ_QC/B
+```
+
+You can inspect the QC reports by copying them over to your own machine (using WinSCP or other methods) and viewing them in a browser. We will skip that with our data for now, but below is an example of what you might expect to see:
+
+pre-QC reads:
+![pre-QC reads](images/pre-qc.png)
+
+post-QC reads:
+![post-QC reads](images/post-qc.png)
+
+
+# Assembling the reads into Contigs using Metawrap's Assembly module
+
+
+Now that we have high quality reads, we need to assemble them into contigs using Metawrap's `assembly` module.
+
+Depending on your study, you might want to assemble the reads from all samples together, or separately. If, for example, you have multiple replicates from a single sample (e.g. a particular soil), it may be of use to coassemble all those samples together. In our case we will stick with assembling our samples individually. 
+
+Metawrap offers 2 different assembly algorithms, [MetaSPADES](https://doi.org/10.1101/gr.213959.116) and [Megahit](https://doi.org/10.1093/bioinformatics/btv033). MetaSPADES is usually recommended for all but large datasets, but we will use Megahit here to reduce computational burden.
+
+
+## Making the Assembly.sh submission script
+
+We need to create the `Assembly.sh` script to assemble our two samples. Start by creating and opening this file in the `Scripts` subdirectory:
+```bash
+nano Scripts/QC.sh
+```
+
+You should now be inside an open empty file, which we will gradually add to in order to build up our submission script for assembly of reads into contigs.
+
+### Adding Slurm scheduler parameters
+
+We need to tell the Slurm scheduler how much resource we want to allocate to the job. The following parameters have been optimised for this dataset. Add them to your open `Assembly.sh` file by copying and pasting:
+```bash
+#!/bin/bash
+
+#SBATCH --partition=uoa-compute
+#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=16
+#SBATCH --mem-per-cpu=250M
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=
+```
+*note: add in your email address after `mail-user=` in order to get email updates for the job*
+
+### Adding some description of the version the script was written for
+
+It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
+```bash
+### This was written for metawrap version 1.3.2 ###
+```
+
+### Adding code for loading miniconda and activating the correct
+Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
+```bash
+## Source own miniconda3 installation
+
+source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
+conda activate metawrap
+```
+*note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
+
+### Adding code to set the input and output directories
+As above, add the below to your open file:
+```bash
+## Set directory and file name variables
+
+InputDir=READ_QC
+OutputDir=ASSEMBLY
+```
+*note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
+
+### Add code to make the output directories
+
+```bash
+## Make output directories
+
+mkdir -p ASSEMBLY/A
+mkdir -p ASSEMBLY/B
+```
+
+### Add code to assemble the reads into contigs use Metawrap's Assembly module
+
+We want to run the assembly module individually on each sample, so we will do that by adding the following:
+```bash
+## Assemble contigs for sample A using metawrap assembly:
+
+metawrap assembly -1 "$InputDir"/A/final_pure_reads_1.fastq -2 "$InputDir"/A/final_pure_reads_2.fastq -m 8 -t 16 --megahit -o "$OutputDir"/A
+
+## Assemble contigs for sample B using metawrap assembly:
+
+metawrap assembly -1 "$InputDir"/B/final_pure_reads_1.fastq -2 "$InputDir"/B/final_pure_reads_2.fastq -m 8 -t 16 --megahit -o "$OutputDir"/B
+```
+
+This will take in the trimmed forward reads `-1` and the trimmed reverse reads `-2`, tell the assembler how much memory we have allocated `-m 4` (4 GB) and how many CPU threads to use `-t 16`, to use the megahit assembly algorithm `--megahit`, and where to send the output `-o`. There is the option to change the minimum length of assembled contigs to output, `-l`, but we will leave it at the default of 1000 bp.
+
+Exit close and save the file by using Ctrl+x, then y, then Enter.
+
+## Running the Assembly.sh script
+
+You can now run the script as below:
+```bash
+sbatch Scripts/Assembly.sh
+```
+
+It should take about 20 minutes to run.
+
+## Inspecting the output of Metawrap's assembly module
+
+Once `Assembly.sh` has finished running, you should have a subdirectory called `ASSEMBLY` that contains subdirectories `A` and `B`. Each of these will contain 2 output files and 2 directories containing intermediate files:
+
+> QUAST_out
+> assembly_report.html
+> final_assembly.fasta
+> megahit
+
+`megahit` and `QUAST_out` contain intermediate files. `final_assembly.fasta` is the final assembly and `assembly_report.html` is the assembly report generated by QUAST.
+
+Verify that you have these files for both samples A and B by running:
+```bash
+ls -l ASSEMBLY/A
+ls -l ASSEMBLY/B
+```
+
+The full assembly report can be inspected by transferring it to your own machine (using WinSCP or other methods) and viewing it in a browser. The report will contain some statistics about the assembly as well as some handy plots of cumulative assembly size by number of contigs, and the size of the contigs in descending order, as well as GC content:
+![Assembly Report from QUAST](images/assembly-report.png)
+
+However, we will just quickly inspect the output here on the command line. Copy and paste the below into the command line:
+```bash
+tail -n 9 ASSEMBLY/A/QUAST_out/report.txt
+tail -n 9 ASSEMBLY/B/QUAST_out/report.txt
+```
+
+You should get an output that looks like this for sample A:
+> # contigs                   342
+> Largest contig              608036
+> Total length                17511269
+> GC (%)                      65.78
+> N50                         100724
+> N75                         56802
+> L50                         46
+> L75                         103
+> # N's per 100 kbp           0.00
+
+and like this for sample B:
+> # contigs                   356
+> Largest contig              342165
+> Total length                16616502
+> GC (%)                      63.62
+> N50                         93270
+> N75                         54316
+> L50                         56
+> L75                         115
+> # N's per 100 kbp           0.00
+
+**Now that we have assembled our reads into contigs, it is time to bin the contigs into different bins to make Metagenome Assembled Genomes (MAGs)**
+
+# Binning into MAGs using Metawrap's Binning module
