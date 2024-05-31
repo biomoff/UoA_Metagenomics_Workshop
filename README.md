@@ -23,9 +23,90 @@ rm -rf ~/miniconda3/miniconda.sh
 ~/miniconda3/bin/conda init bash
 ```
 
+If this is the first time you have used conda on Maxwell, you will need to **restart your session by logging out and back in.** 
+
+### Adding channels
+
 You will then need to add some extra channels (repositories to search for packages), in order to be able to create the environments:
 ```bash
 conda config --add channels conda-forge bioconda
+```
+
+It is also recommended to install Mamba, a conda 'drop-in' replacement, before creating the environments to speed things up:
+```bash
+conda install -y mamba
+```
+
+
+At this point you might normally start creating your environments with the software packages and dependencies that you intend to use. However, Metawrap and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. A separate Markdown document (@ name.md) is provided for those who wish to do this themselves at a later date.
+
+**We will be using some pre-configured environments in this workshop that have everything you need to run these tools.**
+
+## Check the environments are set up correctly
+
+Although we are providing pre-configured environments, we should check to make sure they are working properly for you and can find the databases required.
+
+### Check Metawrap environment
+
+A Metawrap environment is provided for this training at `/uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2`. You can activate it using:
+```bash
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+```
+
+You should see the environment (in brackets) before your username in the command prompt change as below:
+![(base) changes to (Metawrap-v1.3.2) before the command prompt](images/Metawrap-env.png)
+
+Now we need to check that the paths to the databases are configured properly. Verify that the output of:
+```bash
+echo $BLASTDB
+```
+matches:
+> /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/databases/NCBI_nt
+
+and that the output of:
+```bash
+echo $TAXDUMP
+```
+matches:
+> /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/databases/NCBI_tax
+
+If it does, then Metawrap is ready to be used.
+
+**Deactivate the environment using:**
+```bash
+conda deactivate
+```
+
+
+### Check METABOLIC environment
+
+A Metawrap environment is provided for this training at `/uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0`. You can activate it using:
+```bash
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0
+```
+
+You should see the environment (in brackets) before your username in the command prompt change as below:
+![(base) changes to (METABOLIC-v4.0) before the command prompt](images/METABOLIC-env.png)
+
+Now we need to check that the paths to the databases are configured properly. Verify that the output of:
+```bash
+echo $GTDBTK_DATA_PATH
+```
+matches:
+> /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/databases/GTDB-Tk_r220
+
+and the output of:
+```bash
+echo $GTDB_DATA_PATH
+```
+matches:
+> /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/databases/GTDB-Tk_r220
+
+If it does, then METABOLIC is ready to be used.
+
+**Deactivate the environment using:**
+```bash
+conda deactivate
 ```
 
 ## Clone this repository to your own space on Maxwell
@@ -41,77 +122,23 @@ cd /uoa/scratch/users/your-username
 git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 ```
 
-## Create the environments
-
-It is recommended to install Mamba, a conda 'drop-in' replacement, before creating the environments to speed things up:
-```bash
-conda install -y mamba
-```
-
-### Creating the metawrap environment
-
-The `metawrap.yaml` environment file is provided to create the conda environment that contains all the packages / libraries needed to conduct microbial genome assembly from metagenomic data.
-
-You can create the environment using:
-```bash
-sbatch --nodes=1 --cpus-per-task=1 --mem-per-cpu=4G --wrap "mamba env create -y -f metawrap.yaml > /dev/null"
-```
-
-activate the environment with:
-```bash
-conda activate Metawrap-v1.3.2
-```
-
-We need to check that some of the variables are set properly. Let's do that by using:
-```bash
-echo $BLASTDB
-```
-Verify that what you have matches:
-> /uoa/scratch/shared/Soil_Microbiology_Group/Reference_databases/Metawrap/NCBI_nt
-
-and
-```bash
-echo $TAXDUMP
-```
-
-Verify that what you have matches:
-> /uoa/scratch/shared/Soil_Microbiology_Group/Reference_databases/Metawrap/NCBI_taxqueue
-
-### Creating the METABOLIC environment
-
-The `METABOLIC.yaml` environment file is provided to create the conda enviornment that contains all the packages / libraries needed to conduct functionall annotation of MAGs.
-
-
-You can then create the environments using:
-```bash
-sbatch --nodes=1 --cpus-per-task=1 --mem-per-cpu=4G --wrap "mamba env create -y -f metawrap.yaml > /dev/null"
-```
-and
-```bash
-sbatch --nodes=1 --cpus-per-task=1 --mem-per-cpu=4G --wrap "mamba env create -y -f METABOLIC.yaml > /dev/null"
-```
-
-*Note: we might usually just use `mamba env create -y -f file.yaml` directly, but here we are submitting it to the cluster to avoid overloading the login node, particularly if all trying to do it at the same time. We are also discarding the text that is usually shown on the terminal when create environments interactively*
-
-**You should now have the environments set up to run the analyses.**
-
-@ THE ABOVE MAY BE CHANGED TO REFLECT THE FACT THAT ENVIRONMENTS ARE ALREADY AVAILABLE IN THE SHARED FOLDER
-@ ALL INSTANCES OF ACTIVATING ENVIRONMENTS MIGHT NEED TO REFERENCE THE FULL PATH, RATHER THAN JUST BY NAME
-@ ADD IN SECTION ABOUT HOW PEOPLE CAN SET UP THEIR OWN ENVIRONMENTS USING THE .YAML FILES PROVIDED BUT EXTRA SETUP IS NEEDED FOR PATHS TO DATABASES
+@ WHAT DOES THIS NOW PROVIDE?
 
 ---
 
 # Get the Raw Data
 
-@ ALLOW RAW DATA COPYING FROM TRAINING/METAGENOMICS/RAW_READS/ OR SIMILAR
-
-Run the download script to get the raw data for the analysis. Do not worry about understanding how this step works just now, as it is unlikely to apply when using your own data.
-
+A small metagenomics dataset has been prepared for this workshop. Navigate to the workshop folder
 ```bash
-sbatch Scripts/Download.sh
+cd /uoa/scratch/users/your-username/UoA_Metagenomics_Workshop
 ```
 
-You should end up with a directory called `RAW_READS` containing some metagenomics sequence files:
+and copy over the raw data:
+```bash
+cp -r /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/0_RAW-READS 0_RAW-READS
+```
+
+You should now have a directory called `0_RAW-READS` containing some metagenomics sequence files:
 
 > A_1.fastq  
 > A_2.fastq  
@@ -121,7 +148,7 @@ You should end up with a directory called `RAW_READS` containing some metagenomi
 
 Verify that what you have matches the above:
 ```bash
-ls -l RAW_READS
+ls -l 0_RAW-READS
 ```
 
 *If it matches, you can now begin the pipeline, starting with some quality control*
@@ -138,6 +165,7 @@ We will be using the `read_qc` module of Metawrap to trim the reads. Often you m
 ## Making the QC.sh submission script
 We need to create the `QC.sh` script to run read trimming on our two samples. Start by creating and opening this file in the `Scripts` subdirectory:
 ```bash
+module load nano
 nano Scripts/QC.sh
 ```
 
@@ -152,9 +180,12 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --partition=uoa-compute
 #SBATCH --time=01:00:00
 #SBATCH --cpus-per-task=2
-#SBATCH --mem-per-cpu=1G
+#SBATCH --mem-per-cpu=2G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
+
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -163,6 +194,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -171,7 +204,9 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate Metawrap-v1.3.2
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
@@ -180,19 +215,32 @@ It is also useful to be able to see at the top of the file what the input and ou
 ```bash
 ## Set directory and file name variables
 
-InputDir=RAW_READS
-OutputDir=READ_QC
+InputDir=0_RAW-READS
+OutputDir=1_READ-QC
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
+
+### Add code to make the output directories
+
+```bash
+## Make output directories
+
+mkdir -p "$OutputDir"
+```
+
 
 ### Adding the code to run Metawrap's QC module
 
 Finally you can add the code to use Metawrap to perform read trimming on your samples:
 ```bash
 ## QC and trim raw reads:
-mkdir -p "$OutputDir"
+
 metawrap read_qc -1 "$InputDir"/A_1.fastq -2 "$InputDir"/A_2.fastq -t 10 -o "$OutputDir"/A --skip-bmtagger
 metawrap read_qc -1 "$InputDir"/B_1.fastq -2 "$InputDir"/B_2.fastq -t 10 -o "$OutputDir"/B --skip-bmtagger
+
+
 ```
 
 This will read in the forward reads (`-1`) and the reverse reads (`-2`) from your samples, use 10 cpu threads (`-t 10`) to perform the read QC, and then send the output files to your specified output directory (`-o`). We have used the `--skip-bmtagger` flag to skip removal of host sequences.
@@ -206,15 +254,21 @@ You can now run the script as below:
 sbatch Scripts/QC.sh
 ```
 
+This should take roughly 20-25 minutes to run.
+
 ## Inspecting the output of Metawrap's QC module
 
-You should, once it finishes running, have an output directory called `READ_QC` that contains two subdirectories, `A` and `B`. These will each contain 2 files `final_pure_reads_1.fastq` and `final_pure_reads_2.fastq` for the trimmed forward and reverse reads respectively, and some output directories with QC reports: `pre-QC_report` and `post-QC_report`. Verify that you have these outputs using:
+You should, once it finishes running, have an output directory called `1_READ-QC` that contains two subdirectories, `A` and `B`. These will each contain 2 files `final_pure_reads_1.fastq` and `final_pure_reads_2.fastq` for the trimmed forward and reverse reads respectively, and some output directories with QC reports: `pre-QC_report` and `post-QC_report`. Verify that you have these outputs using:
 ```bash
-ls -l READ_QC/A
-ls -l READ_QC/B
+ls -l 1_READ-QC/A
+ls -l 1_READ-QC/B
 ```
 
-You can inspect the QC reports by copying them over to your own machine (using WinSCP or other methods) and viewing them in a browser. We will skip that with our data for now, but below is an example of what you might expect to see:
+Within `pre-QC_report` and `post-QC_report` you would find:
+> final_pure_reads_1_fastqc.html  
+> final_pure_reads_2_fastqc.html  
+
+These QC report HTML files can be inspected by copying them over to your own machine (using WinSCP or other methods) and viewing them in a browser. We will skip that with our data for now, but below is an example of what you might expect to see:
 
 pre-QC reads:
 ![pre-QC reads](images/pre-qc.png)
@@ -255,6 +309,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --mem-per-cpu=250M
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -263,6 +319,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -271,7 +329,9 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate Metawrap-v1.3.2
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
@@ -280,8 +340,10 @@ As above, add the below to your open file:
 ```bash
 ## Set directory and file name variables
 
-InputDir=READ_QC
-OutputDir=ASSEMBLY
+InputDir=1_READ-QC
+OutputDir=2_ASSEMBLY
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
 
@@ -290,8 +352,10 @@ OutputDir=ASSEMBLY
 ```bash
 ## Make output directories
 
-mkdir -p ASSEMBLY/A
-mkdir -p ASSEMBLY/B
+mkdir -p "$OutputDir"/A
+mkdir -p "$OutputDir"/B
+
+
 ```
 
 ### Add code to assemble the reads into contigs using Metawrap's Assembly module
@@ -305,11 +369,14 @@ metawrap assembly -1 "$InputDir"/A/final_pure_reads_1.fastq -2 "$InputDir"/A/fin
 ## Assemble contigs for sample B using metawrap assembly:
 
 metawrap assembly -1 "$InputDir"/B/final_pure_reads_1.fastq -2 "$InputDir"/B/final_pure_reads_2.fastq -m 8 -t 16 --megahit -o "$OutputDir"/B
+
+
 ```
 
 This will take in the trimmed forward reads `-1` and the trimmed reverse reads `-2`, tell the assembler how much memory we have allocated `-m 4` (4 GB) and how many CPU threads to use `-t 16`, to use the megahit assembly algorithm `--megahit`, and where to send the output `-o`. There is the option to change the minimum length of assembled contigs to output, `-l`, but we will leave it at the default of 1000 bp.
 
 **Close and save the file by using Ctrl+x, then y, then Enter.**
+
 
 ## Running the Assembly.sh script
 
@@ -318,23 +385,24 @@ You can now run the script as below:
 sbatch Scripts/Assembly.sh
 ```
 
-It should take about 20 minutes to run.
+It should take about 25-30 minutes to run.
+
 
 ## Inspecting the output of Metawrap's assembly module
 
-Once `Assembly.sh` has finished running, you should have a subdirectory called `ASSEMBLY` that contains subdirectories `A` and `B`. Each of these will contain 2 output files and 2 directories containing intermediate files:
+Once `Assembly.sh` has finished running, you should have a subdirectory called `2_ASSEMBLY` that contains subdirectories `A` and `B`. Each of these will contain 2 output files and 2 directories containing intermediate files:
 
 > QUAST_out  
 > assembly_report.html  
 > final_assembly.fasta  
 > megahit  
 
-`megahit` and `QUAST_out` contain intermediate files. `final_assembly.fasta` is the final assembly and `assembly_report.html` is the assembly report generated by QUAST.
+`megahit` and `QUAST_out` contain intermediate files. `final_assembly.fasta` is the final assembly file containing the contigs and `assembly_report.html` is the assembly report generated by QUAST.
 
 Verify that you have these files for both samples A and B by running:
 ```bash
-ls -l ASSEMBLY/A
-ls -l ASSEMBLY/B
+ls -l 2_ASSEMBLY/A
+ls -l 2_ASSEMBLY/B
 ```
 
 The full assembly report can be inspected by transferring it to your own machine (using WinSCP or other methods) and viewing it in a browser. The report will contain some statistics about the assembly as well as some handy plots of cumulative assembly size by number of contigs, and the size of the contigs in descending order, as well as GC content:
@@ -342,30 +410,30 @@ The full assembly report can be inspected by transferring it to your own machine
 
 However, we will just quickly inspect the output here on the command line. Copy and paste the below into the command line:
 ```bash
-tail -n 9 ASSEMBLY/A/QUAST_out/report.txt
-tail -n 9 ASSEMBLY/B/QUAST_out/report.txt
+tail -n 9 2_ASSEMBLY/A/QUAST_out/report.txt
+tail -n 9 2_ASSEMBLY/B/QUAST_out/report.txt
 ```
 
 You should get an output that looks like this for sample A:
-> \# contigs                   342  
-> Largest contig              608036  
-> Total length                17511269  
-> GC (%)                      65.78  
-> N50                         100724  
+> \# contigs                   345  
+> Largest contig              608195  
+> Total length                17514579  
+> GC (%)                      65.77  
+> N50                         100354  
 > N75                         56802  
-> L50                         46  
-> L75                         103  
+> L50                         47  
+> L75                         105  
 > \# N's per 100 kbp           0.00  
 
 and like this for sample B:
-> \# contigs                   356  
-> Largest contig              342165  
-> Total length                16616502  
-> GC (%)                      63.62  
-> N50                         93270  
-> N75                         54316  
-> L50                         56  
-> L75                         115  
+> \# contigs                   355  
+> Largest contig              393717  
+> Total length                16614804  
+> GC (%)                      63.61  
+> N50                         93956  
+> N75                         54588  
+> L50                         55  
+> L75                         113  
 > \# N's per 100 kbp           0.00  
 
 **Now that we have assembled our reads into contigs, it is time to bin the contigs into different bins to make Metagenome Assembled Genomes (MAGs)**
@@ -374,7 +442,7 @@ and like this for sample B:
 
 # Binning into MAGs using Metawrap's Binning module
 
-**Binning is a crucial step in assembling MAGs from metagenomics data, and involves the placing of contigs into different bins based on taxonomy-informed or taxonomic indepedent methods. Taxonomic indepedent methods use GC content, K-mer frequencies, read depth, and co-variation of abundance across different samples to assign contigs to bins. Here we will be using [Maxbin2](https://doi.org/10.1093/bioinformatics/btv638), which uses tetranucleotide frequences, and [MetaBAT2](https://doi.org/10.7717/peerj.7359), which uses a graph-based approach based on contig similarity.**
+Binning is a crucial step in assembling MAGs from metagenomics data, and involves the placing of contigs into different bins based on taxonomy-informed or taxonomic indepedent methods. Taxonomic indepedent methods use GC content, K-mer frequencies, read depth, and co-variation of abundance across different samples to assign contigs to bins. Here we will be using [Maxbin2](https://doi.org/10.1093/bioinformatics/btv638), which uses tetranucleotide frequences, and [MetaBAT2](https://doi.org/10.7717/peerj.7359), which uses a graph-based approach on contig similarity.
 
 *Note: It is useful to remember that these bins often represent a collection of closely related taxa. 1 MAG != 1 genome from 1 organism.*
 
@@ -406,7 +474,9 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=1G
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=s05am3@abdn.ac.uk
+#SBATCH --mail-user=
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -415,6 +485,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -423,7 +494,9 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate Metawrap-v1.3.2
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
@@ -432,9 +505,11 @@ As above, add the below to your open file:
 ```bash
 ## Set directory and file name variables
 
-Reads=READ_QC
-Assembly=ASSEMBLY
-OutputDir=INITIAL_BINNING
+Reads=1_READ-QC
+Assembly=2_ASSEMBLY
+OutputDir=3_INITIAL-BINNING
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
 
@@ -445,6 +520,8 @@ OutputDir=INITIAL_BINNING
 
 mkdir -p "$OutputDir"/A
 mkdir -p "$OutputDir"/B
+
+
 ```
 
 ### Add code to assign the contigs to bins using Metawrap's binning module
@@ -458,6 +535,8 @@ metawrap binning -o "$OutputDir"/A -t 4 -a "$Assembly"/A/final_assembly.fasta --
 ## Bin contigs using Metawrap binning for sample B
 
 metawrap binning -o "$OutputDir"/B -t 4 -a "$Assembly"/B/final_assembly.fasta --metabat2 --maxbin2 --universal "$Reads"/B/*_1.fastq "$Reads"/B/*_2.fastq
+
+
 ```
 
 Here we are using Metawrap's `binning` module to bin contigs, specifying the number of threads (`-t 4`), the location of the assembly file (`-a`), which binning algorithms to use (`--metabat2 --maxbin2`), and to use universal marker genes rather than just bacterial marker genes (`--universal`) which improves archaeal binning. We then specify that path to the raw reads as positional arguments at the end. There are other options that can be set, but we have left those with the defaults. For your own data, you can check them using `metawrap binning --help`.
@@ -471,31 +550,32 @@ You can now run the script as below:
 sbatch Scripts/Binning.sh
 ```
 
-It should take about 15 minutes to run.
+It should take about 15-20 minutes to run.
+
 
 ## Inspecting the output of Metawrap's Binning module
 
-You should now have a directory called `INITIAL_BINNING` that contains subdirectories `A` and `B`, which will each contain a subdirectory for each of the binning methods and a subdirectory with intermediate files:
+You should now have a directory called `3_INITIAL-BINNING` that contains subdirectories `A` and `B`, which will each contain a subdirectory for each of the binning methods and a subdirectory with intermediate files:
 > maxbin2_bins  
 > metabat2_bins  
 > work_files
 
 Verify you have these using:
 ```bash
-ls -l INITIAL_BINNING/A
-ls -l INITIAL_BINNING/B
+ls -l 3_INITIAL-BINNING/A
+ls -l 3_INITIAL-BINNING/B
 ```
 
 Within each of these you should have the fasta format files of the various bins contigs have been assigned to, e.g. for sample A:
 ```bash
-ls -l INITIAL_BINNING/A/maxbin2_bins
+ls -l 3_INITIAL-BINNING/A/maxbin2_bins
 ```
+> bin.0.fa  
 > bin.1.fa  
-> bin.2.fa  
 > bin.2.fa
 
 ```bash
-ls -l INITIAL_BINNING/A/metabat2_bins
+ls -l 3_INITIAL-BINNING/A/metabat2_bins
 ```
 > bin.1.fa  
 > bin.2.fa  
@@ -531,6 +611,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --mem-per-cpu=12G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -539,6 +621,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -547,18 +630,23 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate Metawrap-v1.3.2
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
 ### Adding code to set the input and output directories
+
 As above, add the below to your open file:
 ```bash
 ## Set directory and file name variables
 
-Reads=READ_QC
-Bins=INITIAL_BINNING
-OutputDir=BIN_REFINEMENT
+Reads=1_READ-QC
+Bins=3_INITIAL-BINNING
+OutputDir=4_BIN-REFINEMENT
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
 
@@ -569,6 +657,8 @@ OutputDir=BIN_REFINEMENT
 
 mkdir -p "$OutputDir"/A
 mkdir -p "$OutputDir"/B
+
+
 ```
 
 ### Add code to refine the bins from different methods using Metawrap's bin_refinement module
@@ -582,6 +672,8 @@ metawrap bin_refinement -o "$OutputDir"/A -t 4 -A "$Bins"/A/metabat2_bins/ -B "$
 ## Run Metawrap's bin refinement module for sample B
 
 metawrap bin_refinement -o "$OutputDir"/B -t 4 -A "$Bins"/B/metabat2_bins/ -B "$Bins"/B/maxbin2_bins/ -c 50 -x 10
+
+
 ```
 
 Here, we are using Metawrap's `bin_refinement` module to take in the multiple bin sets and consolidate them into final improved bins. Here we are only using MetaBAT2 (`-A`) and Maxbin2 (`-B`) bin sets to consolidate. If we had run binning with CONCOCT, we could also supply that using `-C <path-to-concoct-bins>`. It is actually possible to supply bins produced using anything binning algorithm you like. Consult the [documentation](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md) if this is something you want to do with your own data. We have also specified the number of threads to use (`-t 4`), and where to send the output (`-o`). Finally, we have used the `-c` and `-x` flags to set thresholds for completeness and contamination, which can be tailored for your own data depending on your needs. This uses the proportion of expected single copy genes that are present (completeness), and the proportion of expected single copy genes that are present more than once (contamination) in each bin. 
@@ -598,9 +690,10 @@ sbatch Scripts/Bin_refinement.sh
 
 It should take about 1 hour and 5 minutes to run.
 
-## Inspecting the output of Metawrap's XXXX module
 
-This step will produce various outputs and intermediate files:
+## Inspecting the output of Metawrap's bin refinement module
+
+This step will produce various outputs and intermediate files in the `4_Bin-refinement` directory:
 
 > figures  
 > maxbin2_bins  
@@ -616,8 +709,8 @@ This step will produce various outputs and intermediate files:
 
 verify that what you have matches the above:
 ```bash
-ls -l BIN_REFINEMENT/A
-ls -l BIN_REFINEMENT/B
+ls -l 4_BIN-REFINEMENT/A
+ls -l 4_BIN-REFINEMENT/B
 ```
 
 
@@ -628,14 +721,14 @@ ls -l BIN_REFINEMENT/B
 
 Verify that you have the same number of bins:
 ```bash
-ls -l BIN_REFINEMENT/A/metawrap_50_10_bins
-ls -l BIN_REFINEMENT/B/metawrap_50_10_bins
+ls -l 4_BIN-REFINEMENT/A/metawrap_50_10_bins
+ls -l 4_BIN-REFINEMENT/B/metawrap_50_10_bins
 ```
 
 You can also check `metawrap_50_10_bins.stats` to see the statistics and taxonomy of the bins:
 
 ```bash
-cat BIN_REFINEMENT/A/metawrap_50_10_bins.stats
+cat 4_BIN-REFINEMENT/A/metawrap_50_10_bins.stats
 ```
 > bin     completeness    contamination   GC      lineage N50     size    binner  
 > bin.1   99.57   0.0     0.722   Streptomycetaceae       80779   8364312 binsA  
@@ -643,7 +736,7 @@ cat BIN_REFINEMENT/A/metawrap_50_10_bins.stats
 > bin.2   98.82   1.014   0.616   Pseudomonas     117668  5996447 binsAB  
 
 ```bash
-cat BIN_REFINEMENT/B/metawrap_50_10_bins.stats
+cat 4_BIN-REFINEMENT/B/metawrap_50_10_bins.stats
 ```
 > bin     completeness    contamination   GC      lineage N50     size    binner  
 > bin.2   100.0   0.0     0.310   Euryarchaeota   115106  1846511 binsB  
@@ -685,6 +778,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --mem-per-cpu=4G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -693,6 +788,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -701,7 +797,9 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate Metawrap-v1.3.2
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
@@ -710,9 +808,11 @@ As above, add the below to your open file:
 ```bash
 ## Set directory and file name variables
 
-Reads=READ_QC
-Bins=BIN_REFINEMENT
-OutputDir=BIN_REASSEMBLY
+Reads=1_READ-QC
+Bins=4_BIN-REFINEMENT
+OutputDir=5_BIN-REASSEMBLY
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
 
@@ -723,6 +823,8 @@ OutputDir=BIN_REASSEMBLY
 
 mkdir -p "$OutputDir"/A
 mkdir -p "$OutputDir"/B
+
+
 ```
 
 ### Add code to reassemble the reads into contigs using Metawrap's reassemble_bins module
@@ -736,6 +838,8 @@ metawrap reassemble_bins -o "$OutputDir"/A -1 "$Reads"/A/final_pure_reads_1.fast
 ## Run Metawrap's bin reassembly module for sample B
 
 metawrap reassemble_bins -o "$OutputDir"/B -1 "$Reads"/B/final_pure_reads_1.fastq -2 "$Reads"/B/final_pure_reads_2.fastq -t 16 -m 64 -c 50 -x 10 -b "$Bins"/B/metawrap_50_10_bins
+
+
 ```
 
 Here we are using Metawrap's `reassemble_bins` module to reassemble the forward (`-1`) and reverse (`-2`) reads using 16 threads (`-t 16`) and 64GB memory (`-m 64`) based on the refined bins (`-b`). We are also specifying the bin completion (`-c 50`) and contamination (`-x 10`) thresholds the same as for the original binning, and specifying where the output should go (`-o`).
@@ -853,7 +957,7 @@ Next, we need to make sure that our job is using the environment that we made, s
 ## Source own miniconda3 installation
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
-conda activate METABOLIC-v4.0
+conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
