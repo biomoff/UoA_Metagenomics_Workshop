@@ -133,9 +133,9 @@ A small metagenomics dataset has been prepared for this workshop. Navigate to th
 cd /uoa/scratch/users/your-username/UoA_Metagenomics_Workshop
 ```
 
-and copy over the raw data:
+and link the raw data:
 ```bash
-cp -r /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/0_RAW-READS 0_RAW-READS
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/0_RAW-READS 0_RAW-READS
 ```
 
 You should now have a directory called `0_RAW-READS` containing some metagenomics sequence files:
@@ -255,6 +255,11 @@ sbatch Scripts/QC.sh
 ```
 
 This should take roughly 20-25 minutes to run.
+
+If it does not run within the allocated time, you can link to the example output provided using:
+```bash
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/1_READ-QC 1_READ-QC
+```
 
 ## Inspecting the output of Metawrap's QC module
 
@@ -387,6 +392,10 @@ sbatch Scripts/Assembly.sh
 
 It should take about 25-30 minutes to run.
 
+If it does not run within the allocated time, you can link to the example output provided using:
+```bash
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/2_ASSEMBLY 2_ASSEMBLY
+```
 
 ## Inspecting the output of Metawrap's assembly module
 
@@ -552,6 +561,10 @@ sbatch Scripts/Binning.sh
 
 It should take about 15-20 minutes to run.
 
+If it does not run within the allocated time, you can link to the example output provided using:
+```bash
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/3_INITIAL-BINNING 3_INITIAL-BINNING
+```
 
 ## Inspecting the output of Metawrap's Binning module
 
@@ -690,6 +703,10 @@ sbatch Scripts/Bin_refinement.sh
 
 It should take about 1 hour and 5 minutes to run.
 
+If it does not run within the allocated time, you can link to the example output provided using:
+```bash
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/4_BIN-REFINEMENT 4_BIN-REFINEMENT
+```
 
 ## Inspecting the output of Metawrap's bin refinement module
 
@@ -848,19 +865,17 @@ Here we are using Metawrap's `reassemble_bins` module to reassemble the forward 
 
 ## Running the Bin_reassembly.sh script
 
-You can now run the script as below:
-```bash
-sbatch Scripts/Bin_reassembly.sh
-```
+You would now be able to run the script using `sbatch Scripts/Bin_reassembly.sh`, but it would take too long to do within the session.
 
-It will likely take too long to run within the session, but the results are provided at `<location>`. Copy them to your own working directory with:
+You can find the example results at `/uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/5_BIN-REASSEMBLY`, and link to them in your own directory using:
+
 ```bash
-cp <some-location>/BIN_REASSEMBLY
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/5_BIN-REASSEMBLY 5_BIN-REASSEMBLY
 ```
 
 ## Inspecting the output of Metawrap's bin_reassembly module
 
-You should now have directory called `BIN_REASSEMBLY` that contains the subdirectories `A` and `B`. Within each of these you will have the following:
+You should now have directory called `5_BIN-REASSEMBLY` that contains the subdirectories `A` and `B`. Within each of these you will have the following:
 > original_bins  
 > original_bins.stats  
 > reassembled_bins  
@@ -874,35 +889,38 @@ You should now have directory called `BIN_REASSEMBLY` that contains the subdirec
 
 Within `reassembled_bins.stats` you will find which version of each bin was used and the associated statistics:
 ```bash
-cat BIN_REASSEMBLY/A/reassembled_bins.stats  
+cat 5_BIN-REASSEMBLY/A/reassembled_bins.stats  
 ```
 > bin     completeness    contamination   GC      lineage N50     size  
-> bin.1.strict    99.72   0.679   0.553   Cyanobacteria   424257  2819757  
-> bin.2.orig      99.57   0.0     0.721   Streptomycetaceae       84144   8530757  
-> bin.3.orig      98.82   1.014   0.616   Pseudomonas     152991  5986269
+> bin.1.orig      99.57   0.0     0.722   Streptomycetaceae       80779   8364312  
+> bin.2.strict    99.72   0.0     0.554   Cyanobacteria   406760  2668992  
+> bin.3.orig      98.82   1.014   0.616   Pseudomonas     112980  5996052  
 
 ```bash
-cat BIN_REASSEMBLY/B/reassembled_bins.stats  
+cat 5_BIN-REASSEMBLY/B/reassembled_bins.stats  
 ```
 > bin     completeness    contamination   GC      lineage N50     size  
-> bin.1.orig      98.82   1.884   0.616   Pseudomonas     127079  6043742  
-> bin.2.orig      99.57   0.0     0.721   Streptomycetaceae       84144   8531397  
-> bin.3.permissive        100.0   0.0     0.311   Euryarchaeota   194020  1856981
+> bin.1.permissive        99.91   2.275   0.615   Pseudomonas     190794  6235225  
+> bin.2.permissive        99.57   0.0     0.722   Streptomycetaceae       90075   8377728  
+> bin.3.permissive        100.0   0.0     0.310   Euryarchaeota   194754  1850953  
 
-You can see that for bin 1 in sample A, and bin 3 in sample B, reassembly improved the quality of the bins. You can find the final bin files in fasta format (and some other formats), in the `reassembled_bins` subdirectory:
+You can see that for bin 2 in sample A, and all bins in sample B, reassembly improved the quality of the bins. *Note: the results are not 100% reproducible from run to run, and your output may differ slightly if you run this yourself.*
+
+
+You can find the final bin files in fasta format (and some other formats), in the `reassembled_bins` subdirectory:
 ```bash
-ls -l BIN_REASSEMBLY/A/reassembled_bins/*.fasta
+ls -l 5_BIN-REASSEMBLY/A/reassembled_bins/*.fa
 ```
-> BIN_REASSEMBLY/A/reassembled_bins/bin.1.strict.fasta  
-> BIN_REASSEMBLY/A/reassembled_bins/bin.2.orig.fasta  
-> BIN_REASSEMBLY/A/reassembled_bins/bin.3.orig.fasta
+> BIN_REASSEMBLY/A/reassembled_bins/bin.1.orig.fa  
+> BIN_REASSEMBLY/A/reassembled_bins/bin.2.strict.fa  
+> BIN_REASSEMBLY/A/reassembled_bins/bin.3.orig.fa
 
 ```bash
-ls -l BIN_REASSEMBLY/B/reassembled_bins/*.fasta
+ls -l 5_BIN-REASSEMBLY/B/reassembled_bins/*.fa
 ```
-> BIN_REASSEMBLY/B/reassembled_bins/bin.1.orig.fasta  
-> BIN_REASSEMBLY/B/reassembled_bins/bin.2.orig.fasta  
-> BIN_REASSEMBLY/B/reassembled_bins/bin.3.permissive.fasta  
+> BIN_REASSEMBLY/B/reassembled_bins/bin.1.permissive.fa  
+> BIN_REASSEMBLY/B/reassembled_bins/bin.2.permissive.fa  
+> BIN_REASSEMBLY/B/reassembled_bins/bin.3.permissive.fa  
 
 **These are our MAGs that we can now use for downstream analysis.**
 
@@ -919,6 +937,21 @@ bash Scripts/fa_to_fasta.sh
 
 You will now have the right files for METABOLIC, in a new directory called `MAGs` and we can move onto the next step.
 
+Verify that you have this directory containing the MAGs with:
+```bash
+ls -l MAGs/A
+```
+> bin.1.orig.fasta  
+> bin.2.strict.fasta  
+> bin.3.orig.fasta  
+
+```bash
+ls -l MAGs/B
+```
+> bin.1.permissive.fasta  
+> bin.2.permissive.fasta  
+> bin.3.permissive.fasta  
+
 
 ## Making the METABOLIC.sh submission script
 
@@ -927,7 +960,7 @@ We need to create the `METABOLIC.sh` script to assemble our two samples. Start b
 nano Scripts/METABOLIC.sh
 ```
 
-You should now be inside an open empty file, which we will gradually add to in order to build up our submission script for reassembling bins.
+You should now be inside an open empty file, which we will gradually add to in order to build up our submission script for functionally annotating MAGs.
 
 ### Adding Slurm scheduler parameters
 
@@ -941,6 +974,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 #SBATCH --mem-per-cpu=5G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
+
+
 ```
 *note: add in your email address after `mail-user=` in order to get email updates for the job*
 
@@ -949,6 +984,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for METABOLIC v4.0 ###
+
 ```
 
 ### Adding code for loading miniconda and activating the correct
@@ -958,6 +994,8 @@ Next, we need to make sure that our job is using the environment that we made, s
 
 source /uoa/home/your-username/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0
+
+
 ```
 *note: change 'your-username' to your actual user name. If you fail to do this, conda will not work.*
 
@@ -966,10 +1004,12 @@ As above, add the below to your open file:
 ```bash
 ## Set directory and file name variables
 
-Metabolic=/uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/METABOLIC ### WILL NEED TO CHANGE 
+Metabolic=/uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/METABOLIC 
 GenomesA=MAGs/A
 GenomesB=MAGs/B
-OutputDir=METABOLIC
+OutputDir=6_METABOLIC
+
+
 ```
 *note: avoid changing the names here, as the rest of this workshop will reference these directories specifically.*
 
@@ -980,6 +1020,8 @@ OutputDir=METABOLIC
 
 mkdir -p "$OutputDir"/A
 mkdir -p "$OutputDir"/B
+
+
 ```
 
 ### Add code to specify paths to metagenomics reads
@@ -989,9 +1031,11 @@ METABOLIC requires you to specify a file that gives the path to the input reads 
 ## Make file specifying path to metagenomic reads
 
 echo "#Read pairs:" > A.txt
-echo "READ_QC/A/final_pure_reads_1.fastq,READ_QC/A/final_pure_reads_2.fastq" >> A.txt
+echo "1_READ-QC/A/final_pure_reads_1.fastq,1_READ-QC/A/final_pure_reads_2.fastq" >> A.txt
 echo "#Read pairs:" > B.txt
-echo "READ_QC/B/final_pure_reads_1.fastq,READ_QC/B/final_pure_reads_2.fastq" >> B.txt
+echo "1_READ-QC/B/final_pure_reads_1.fastq,1_READ-QC/B/final_pure_reads_2.fastq" >> B.txt
+
+
 ```
 
 ### Add code to functionally annotate your genomes and samples using METABOLIC-C
@@ -1002,9 +1046,12 @@ perl "$Metabolic"/METABOLIC-C.pl -t 40 -m-cutoff 0.75 -in-gn "$GenomesA" -r A.tx
 
 ## Run METABOLIC-C on genomes for sample B
 perl "$Metabolic"/METABOLIC-C.pl -t 40 -m-cutoff 0.75 -in-gn "$GenomesB" -r B.txt -kofam-db full -o "$OutputDir"/B
+
+
 ```
 
-Here we are using METABOLIC in community mode `METABOLIC-C`, with 40 threads (`-t 40`). ADD MORE DETAIL
+Here we are using METABOLIC in community mode `METABOLIC-C`, with 40 threads (`-t 40`). We are using `m-cutoff 0.75` to use a threshold of 75% of genes in a pathway required to be present before a KEGG module is treated as being present (due to low completion rates of MAGs in most cases, these thresholds cannot be 100% in most cases). We are specifying the path to our MAGs using `-in-gn` , and the path to the raw reads using `-r`. We are using the full rather than small KOfam database (`-kofam-db full`). Finally, we are sending the output to the directory we set earlier in the script, `6_METABOLIC` using `-o`.
+*Note: there are many more options that you might wish to use / tune for your own data. You can find this using the `--help` flag.*
 
 
 ### Finally, clean up those files we had to make specifying the path to the reads
@@ -1017,12 +1064,12 @@ rm A.txt B.txt
 
 ## Running the METABOLIC.sh script
 
-You can now run the script as below:
-```bash
-sbatch Scripts/METABOLIC.sh
-```
+You could now run the script using `sbatch Scripts/METABOLIC.sh` but it is quite resource intensive and not everybody could run it at the same time.
 
-It should take roughly 1 hour to run.
+Link to the example results provided using:
+```bash
+ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/6_METABOLIC 6_METABOLIC
+```
 
 
 ## Inspecting the output of METABOLIC
@@ -1045,4 +1092,4 @@ You should have the following files and directories in the `METABOLIC/A` and `ME
 
  We will be looking at the following outputs:
 > METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf  
->
+> METABOLIC_result.xlsx  
