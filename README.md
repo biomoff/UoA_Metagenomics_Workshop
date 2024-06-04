@@ -123,6 +123,9 @@ git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 ```
 
 @ WHAT DOES THIS NOW PROVIDE?
+- Scripts/fa_to_fasta.sh
+- environment files for those who want to make their own
+- another markdown document with information on how to prepare the environments
 
 ---
 
@@ -1076,7 +1079,7 @@ ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/6
 
 METABOLIC provides quite a lot of output, but we will look at a subset of that here for simplicity. If you want to learn more about all the outputs it can provide, have a look at the [original publication](https://doi.org/10.1186/s40168-021-01213-8) or the [Github page](https://github.com/AnantharamanLab/METABOLIC/tree/master?tab=readme-ov-file).
 
-You should have the following files and directories in the `METABOLIC/A` and `METABOLIC/B` output directories:
+You should have the following files and directories in the `6_METABOLIC/A` and `6_METABOLIC/B` output directories:
 > All_gene_collections_mapped.depth.txt  
 > Each_HMM_Amino_Acid_Sequence  
 > KEGG_identifier_result  
@@ -1090,6 +1093,56 @@ You should have the following files and directories in the `METABOLIC/A` and `ME
 > intermediate_files
 
 
+
  We will be looking at the following outputs:
 > METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf  
 > METABOLIC_result.xlsx  
+
+To start with, let us have a look at the carbon cycles for each community (sample):
+> 6_METABOLIC/A/METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf  
+> 6_METABOLIC/A/METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf 
+
+![Comparison of the carbon cycles of Sample A and Sample B. Sample A has carbon fixation, and B does not. Sample B has methanogenesis, and A does not.](images/METABOLIC-output.png)
+
+You can see that in sample A, there is a genome that is predicted to perform carbon fixation, which is not the case in B. This makes sense based on when we inspected the bins at an earlier stage for sample A:
+
+> bin     completeness    contamination   GC      lineage N50     size  
+> bin.1.orig      99.57   0.0     0.722   Streptomycetaceae       80779   8364312  
+> bin.2.strict    99.72   0.0     0.554   Cyanobacteria   406760  2668992  
+> bin.3.orig      98.82   1.014   0.616   Pseudomonas     112980  5996052 
+
+You can see we have a cyanobacterium, which are known to be photosynthetic and likely responsible for the carbon fixation here. We can verify this by inspecting `METABOLIC_result.xlsx`. Sheet 2 is called `FunctionHit` and contains various functions and whether they are predicted to be present in each of the MAGs. Inspecting this data for sample A We see the following:
+
+![Sample A shows carbon fixation via CBB cycle - Rubisco (Form I) is present in bin 2, the cyanobacterium MAG](images/sample-A-carbon-cycle.png)
+
+We can see that it is indeed the MAG annotated as a cyanobacterium, (bin.2.strict), that is predicted to perform carbon fixation via the CBB (Calvin) cycle - Rubisco (Form I). 
+
+
+We can also see in the carbon cycle diagrams above that, in sample B, there is a genome that is predicted to perform methanogenesis, which is not the case in A. If we inspect the bins for sample B we see:
+> bin     completeness    contamination   GC      lineage N50     size  
+> bin.1.permissive        99.91   2.275   0.615   Pseudomonas     190794  6235225  
+> bin.2.permissive        99.57   0.0     0.722   Streptomycetaceae       90075   8377728  
+> bin.3.permissive        100.0   0.0     0.310   Euryarchaeota   194754  1850953
+
+Bin 3 is annotated as belonging to the Euryarchaeota, which is a broad kingdom of archaea that include methanogens. If we go on to inspect the `FunctionHit` sheet of `METABOLIC_result.xlsx`, we see the following:
+
+![Sample B shows presence of mcrABC, allowing methane production, in bin 3](images/sample-B-carbon-cycle.png)
+
+We can see that the MAG annotated as belonging to the Euryarchaeota (bin 3) contains the *mcrABC* operon, which catalyses the final step in methanogenesis. 
+
+
+While this was just a quick look at the output of METABOLIC, there is so much more to delve in to, but that is well beyond the scope of this session. Copy over the output of `6_METABOLIC`, particularly `METABOLIC_result.xlsx`, to your own machine using whichever method you prefer and have a look at all the different outputs it provides; check for your favourite pathways and think about how you might analyse these outputs in your own work.
+
+---
+
+# Summary
+
+By this stage, you should be pretty confident in constructing MAGs from raw metagenomic sequences using the scripts you put together in this workshop, and doing some functional annotation. The main things you will need to change are the Slurm scheduler parameters to fit your own data, which will likely be a lot bigger and more complex than what we have used here. 
+
+There is also a lot of scope to do far more with `Metawrap` than what we did here. For example, you can use the `Quant_bins` module:
+![Quant_bins output showing the abundance of each MAG in each sample](images/quant_bins.png)
+
+or visualise the communities in each sample using the `blobology` module:
+![Blobology output showing a scatterplot of each contig with GC content on the X axis and read coverage on the y axis, coloured by taxonomy](images/blobology.png)
+
+Whatever it is you do, always refer to the documentation for [Metawrap](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md) and [METABOLIC](https://github.com/AnantharamanLab/METABOLIC/wiki) when using them to analyse your data, they are your best guides.
