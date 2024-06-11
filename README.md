@@ -197,7 +197,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
@@ -327,7 +327,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
@@ -496,7 +496,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
@@ -636,7 +636,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
@@ -807,7 +807,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
@@ -986,7 +986,7 @@ It is also good practice to note which version of the package you are using the 
 
 ```
 
-### Adding code for loading miniconda and activating the correct
+### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
 ## Source own miniconda3 installation
