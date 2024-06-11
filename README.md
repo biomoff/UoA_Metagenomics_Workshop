@@ -122,10 +122,6 @@ cd /uoa/scratch/users/your-username
 git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 ```
 
-@ WHAT DOES THIS NOW PROVIDE?
-- Scripts/fa_to_fasta.sh
-- environment files for those who want to make their own
-- another markdown document with information on how to prepare the environments
 
 ---
 
@@ -1100,7 +1096,7 @@ You should have the following files and directories in the `6_METABOLIC/A` and `
 
 To start with, let us have a look at the carbon cycles for each community (sample):
 > 6_METABOLIC/A/METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf  
-> 6_METABOLIC/A/METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf 
+> 6_METABOLIC/B/METABOLIC_Figures/Nutrient_Cycling_Diagrams/draw_biogeochem_cycles/draw_carbon_cycle_total.pdf 
 
 ![Comparison of the carbon cycles of Sample A and Sample B. Sample A has carbon fixation, and B does not. Sample B has methanogenesis, and A does not.](images/METABOLIC-output.png)
 
