@@ -48,7 +48,8 @@ If this is the first time you have used conda on Maxwell, you will need to **res
 
 You will then need to add some extra channels (repositories to search for packages), in order to be able to create the environments:
 ```bash
-conda config --add channels conda-forge bioconda
+conda config --add channels conda-forge
+conda config --add channels bioconda
 ```
 
 It is also recommended to install Mamba, a conda 'drop-in' replacement, before creating the environments to speed things up:
@@ -255,15 +256,15 @@ Finally you can add the code to use Metawrap to perform read trimming on your sa
 ```bash
 ## QC and trim raw reads:
 
-metawrap read_qc -1 "$InputDir"/A_1.fastq -2 "$InputDir"/A_2.fastq -t 10 -o "$OutputDir"/A --skip-bmtagger
-metawrap read_qc -1 "$InputDir"/B_1.fastq -2 "$InputDir"/B_2.fastq -t 10 -o "$OutputDir"/B --skip-bmtagger
+metawrap read_qc -1 "$InputDir"/A_1.fastq -2 "$InputDir"/A_2.fastq -t 2 -o "$OutputDir"/A --skip-bmtagger
+metawrap read_qc -1 "$InputDir"/B_1.fastq -2 "$InputDir"/B_2.fastq -t 2 -o "$OutputDir"/B --skip-bmtagger
 
 
 ```
 
-This will read in the forward reads (`-1`) and the reverse reads (`-2`) from your samples, use 10 cpu threads (`-t 10`) to perform the read QC, and then send the output files to your specified output directory (`-o`). We have used the `--skip-bmtagger` flag to skip removal of host sequences.
+This will read in the forward reads (`-1`) and the reverse reads (`-2`) from your samples, use 2 cpu threads (`-t 2`) to perform the read QC, and then send the output files to your specified output directory (`-o`). We have used the `--skip-bmtagger` flag to skip removal of host sequences.
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 ## Running the QC.sh script
 
@@ -387,18 +388,18 @@ We want to run the assembly module individually on each sample, so we will do th
 ```bash
 ## Assemble contigs for sample A using metawrap assembly:
 
-metawrap assembly -1 "$InputDir"/A/final_pure_reads_1.fastq -2 "$InputDir"/A/final_pure_reads_2.fastq -m 8 -t 16 --megahit -o "$OutputDir"/A
+metawrap assembly -1 "$InputDir"/A/final_pure_reads_1.fastq -2 "$InputDir"/A/final_pure_reads_2.fastq -m 4 -t 16 --megahit -o "$OutputDir"/A
 
 ## Assemble contigs for sample B using metawrap assembly:
 
-metawrap assembly -1 "$InputDir"/B/final_pure_reads_1.fastq -2 "$InputDir"/B/final_pure_reads_2.fastq -m 8 -t 16 --megahit -o "$OutputDir"/B
+metawrap assembly -1 "$InputDir"/B/final_pure_reads_1.fastq -2 "$InputDir"/B/final_pure_reads_2.fastq -m 4 -t 16 --megahit -o "$OutputDir"/B
 
 
 ```
 
 This will take in the trimmed forward reads `-1` and the trimmed reverse reads `-2`, tell the assembler how much memory we have allocated `-m 4` (4 GB) and how many CPU threads to use `-t 16`, to use the megahit assembly algorithm `--megahit`, and where to send the output `-o`. There is the option to change the minimum length of assembled contigs to output, `-l`, but we will leave it at the default of 1000 bp.
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 
 ## Running the Assembly.sh script
@@ -492,7 +493,7 @@ You should now be inside an open empty file, which we will gradually add to in o
 
 ### Adding Slurm scheduler parameters
 
-We need to tell the Slurm scheduler how much resource we want to allocate to the job. The following parameters have been optimised for this dataset. Add them to your open `.sh` file by copying and pasting:
+We need to tell the Slurm scheduler how much resource we want to allocate to the job. The following parameters have been optimised for this dataset. Add them to your open `Binning.sh` file by copying and pasting:
 ```bash
 #!/bin/bash
 
@@ -568,7 +569,7 @@ metawrap binning -o "$OutputDir"/B -t 4 -a "$Assembly"/B/final_assembly.fasta --
 
 Here we are using Metawrap's `binning` module to bin contigs, specifying the number of threads (`-t 4`), the location of the assembly file (`-a`), which binning algorithms to use (`--metabat2 --maxbin2`), and to use universal marker genes rather than just bacterial marker genes (`--universal`) which improves archaeal binning. We then specify that path to the raw reads as positional arguments at the end. There are other options that can be set, but we have left those with the defaults. For your own data, you can check them using `metawrap binning --help`.
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 ## Running the Binning.sh script
 
@@ -710,7 +711,7 @@ metawrap bin_refinement -o "$OutputDir"/B -t 4 -A "$Bins"/B/metabat2_bins/ -B "$
 Here, we are using Metawrap's `bin_refinement` module to take in the multiple bin sets and consolidate them into final improved bins. Here we are only using MetaBAT2 (`-A`) and Maxbin2 (`-B`) bin sets to consolidate. If we had run binning with CONCOCT, we could also supply that using `-C <path-to-concoct-bins>`. It is actually possible to supply bins produced using anything binning algorithm you like. Consult the [documentation](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md) if this is something you want to do with your own data. We have also specified the number of threads to use (`-t 4`), and where to send the output (`-o`). Finally, we have used the `-c` and `-x` flags to set thresholds for completeness and contamination, which can be tailored for your own data depending on your needs. This uses the proportion of expected single copy genes that are present (completeness), and the proportion of expected single copy genes that are present more than once (contamination) in each bin. 
 
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 ## Running the Bin_refinement.sh script
 
@@ -877,7 +878,7 @@ metawrap reassemble_bins -o "$OutputDir"/B -1 "$Reads"/B/final_pure_reads_1.fast
 
 Here we are using Metawrap's `reassemble_bins` module to reassemble the forward (`-1`) and reverse (`-2`) reads using 16 threads (`-t 16`) and 64GB memory (`-m 64`) based on the refined bins (`-b`). We are also specifying the bin completion (`-c 50`) and contamination (`-x 10`) thresholds the same as for the original binning, and specifying where the output should go (`-o`).
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 ## Running the Bin_reassembly.sh script
 
@@ -1076,7 +1077,7 @@ Here we are using METABOLIC in community mode `METABOLIC-C`, with 40 threads (`-
 rm A.txt B.txt
 ```
 
-**Save the file by using Ctrl+o, then close the file using Ctrl+x.**
+**Save the file by using Ctrl+o, hit Enter, then close the file using Ctrl+x.**
 
 ## Running the METABOLIC.sh script
 
