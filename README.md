@@ -149,7 +149,7 @@ git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 
 A small metagenomics dataset has been prepared for this workshop. Navigate to the workshop folder
 ```bash
-cd /uoa/scratch/users/YOUR-USERNAME/UoA_Metagenomics_Workshop
+cd /uoa/scratch/users/"$USER"/UoA_Metagenomics_Workshop
 ```
 
 and link the raw data:
@@ -167,7 +167,7 @@ You should now have a directory called `0_RAW-READS` containing some metagenomic
 
 Verify that what you have matches the above:
 ```bash
-ls -l 0_RAW-READS
+ls -l 0_RAW-READS/
 ```
 
 *If it matches, you can now begin the pipeline, starting with some quality control*
@@ -220,14 +220,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 It is also useful to be able to see at the top of the file what the input and output directories that the script will look for files in / output files to. This means that if you want to change the name of the output directory you only need to do it once at the top by changing the variable, and it will automatically apply to the whole script. Add the below to your open file:
@@ -275,7 +275,14 @@ sbatch Scripts/QC.sh
 
 This should take roughly 20-25 minutes to run.
 
-If it does not run within the allocated time, cancel your job using `squeue --me` to find the JOBID, cancel the job using `scancel JOBID`, and link to the example output provided using:
+If it does not run within the allocated time, view your job using `squeue --me` to find the JOBID, and cancel the job using `scancel JOBID`.
+
+remove the incompleted output folder using:
+```bash
+rm -rf 1_READ-QC
+```
+
+and link to the example output provided using:
 ```bash
 ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/1_READ-QC 1_READ-QC
 ```
@@ -350,14 +357,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 As above, add the below to your open file:
@@ -411,7 +418,14 @@ sbatch Scripts/Assembly.sh
 
 It should take about 25-30 minutes to run.
 
-If it does not run within the allocated time, cancel your job using `squeue --me` to find the JOBID, cancel the job using `scancel JOBID`, and link to the example output provided using:
+If it does not run within the allocated time, view your job using `squeue --me` to find the JOBID, and cancel the job using `scancel JOBID`.
+
+remove the incomplete output folder using:
+```bash
+rm -rf 2_ASSEMBLY
+```
+
+and link to the example output provided using:
 ```bash
 ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/2_ASSEMBLY 2_ASSEMBLY
 ```
@@ -519,14 +533,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 As above, add the below to your open file:
@@ -580,7 +594,14 @@ sbatch Scripts/Binning.sh
 
 It should take about 15-20 minutes to run.
 
-If it does not run within the allocated time, cancel your job using `squeue --me` to find the JOBID, cancel the job using `scancel JOBID`, and link to the example output provided using:
+If it does not run within the allocated time, view your job using `squeue --me` to find the JOBID, and cancel the job using `scancel JOBID`.
+
+remove the incomplete output folder using:
+```bash
+rm -rf 3_INITIAL-BINNING
+```
+
+and link to the example output provided using:
 ```bash
 ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/3_INITIAL-BINNING 3_INITIAL-BINNING
 ```
@@ -659,14 +680,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 
@@ -720,7 +741,14 @@ You can now run the script as below:
 sbatch Scripts/Bin_refinement.sh
 ```
 
-If it does not run within the allocated time, you can link to the example output provided using:
+If it does not run within the allocated time, view your job using `squeue --me` to find the JOBID, and cancel the job using `scancel JOBID`.
+
+remove the incomplete output folder using:
+```bash
+rm -rf 4_BIN-REFINEMENT
+```
+
+and link to the example output using:
 ```bash
 ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/4_BIN-REFINEMENT 4_BIN-REFINEMENT
 ```
@@ -828,14 +856,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 As above, add the below to your open file:
@@ -1007,14 +1035,14 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation
+## Source own miniconda3 installation and activate environment
 
-source /uoa/home/YOUR-USERNAME/miniconda3/etc/profile.d/conda.sh
+source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0
 
 
 ```
-*note: change 'YOUR-USERNAME' to your actual user name. If you fail to do this, conda will not work.*
+
 
 ### Adding code to set the input and output directories
 As above, add the below to your open file:
@@ -1091,7 +1119,7 @@ ln -s /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/output/6
 
 ## Inspecting the output of METABOLIC
 
-METABOLIC provides quite a lot of output, but we will look at a subset of that here for simplicity. If you want to learn more about all the outputs it can provide, have a look at the [original publication](https://doi.org/10.1186/s40168-021-01213-8) or the [Github page](https://github.com/AnantharamanLab/METABOLIC/tree/master?tab=readme-ov-file).
+METABOLIC provides quite a lot of output, but we will look at a subset of that here for simplicity. If you want to learn more about all the outputs it can provide, have a look at the [original publication](https://doi.org/10.1186/s40168-021-01213-8) or the [Github page](https://github.com/AnantharamanLab/METABOLIC/tree/master?tab=readme-ov-file). You can use WinSCP or other programs to move the output over to your own machine.
 
 You should have the following files and directories in the `6_METABOLIC/A` and `6_METABOLIC/B` output directories:
 > All_gene_collections_mapped.depth.txt  
