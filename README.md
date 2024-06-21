@@ -135,7 +135,7 @@ This will give you environment files and the scripts needed to run the analysis 
 
 Navigate to somewhere sensible
 ```bash
-cd /uoa/scratch/users/YOUR-USERNAME
+cd /uoa/scratch/users/"$USER"
 ```
 
 ```bash
