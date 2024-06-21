@@ -247,6 +247,7 @@ OutputDir=1_READ-QC
 ## Make output directories
 
 mkdir -p "$OutputDir"
+
 ```
 
 
@@ -277,7 +278,7 @@ This should take roughly 20-25 minutes to run.
 
 If it does not run within the allocated time, view your job using `squeue --me` to find the JOBID, and cancel the job using `scancel JOBID`.
 
-remove the incompleted output folder using:
+remove the incomplete output folder using:
 ```bash
 rm -rf 1_READ-QC
 ```
