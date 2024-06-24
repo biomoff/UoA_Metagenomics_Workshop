@@ -7,11 +7,11 @@
 ---
 # Notes on using these materials
 
-- Code can be copied from code blocks using the button at the top right of each code block with a single click
+- **Code can be copied from code blocks using the button at the top right of each code block with a single click**
 
-- To paste code into your terminal, you will need to right click. 
+- **To paste code into your terminal, you will need to right click.**
 
-- You can check the status of your running jobs using:
+- **You can check the status of your running jobs using:**
 ```bash
 squeue --me
 ```
@@ -23,44 +23,36 @@ scancel YOUR-JOB-ID
 Obviously swapping 'YOUR-JOB-ID' for the actual job identifier.
 
 
+- **If you lose connection or get lost at any point**
+
+You can return to the directory we will be running all steps from using:
+```bash
+cd /uoa/scratch/users/"$USER"/UoA_Metagenomics_Workshop
+```
+
 ---
 
 # Setup
 
-## Install miniconda3 if necessary
+## Environments
 
-Details on how to install miniconda are available [here](https://docs.anaconda.com/free/miniconda/#quick-command-line-install)
+In order to ensure that all the packages we need and their dependencies are installed, and so that versions required by each of the programs we are running do not conflict with eachother, we will be using `conda` to manage our 'environments'. 
 
-Below is the quick version pasted from the above link. Make sure to navigate to your home directory first using `cd`.
+### What is an environment
 
-Install miniconda:
-```bash
-mkdir -p ~/miniconda3
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-rm -rf ~/miniconda3/miniconda.sh
-~/miniconda3/bin/conda init bash
-```
+An environment in Conda is a self-contained directory that contains a specific collection of packages and dependencies. This means you can have multiple environments on your system, each tailored for a particular project or task, without interfering with each other.
 
-If this is the first time you have used conda on Maxwell, you will need to **restart your session by logging out and back in.** 
+Managing environments with `conda` ensures:
+1. Isolation: Different projects can require different versions of the same package. Environments keep these separate to avoid conflicts.
 
-### Adding channels
+2. Reproducibility: By using environments, you can easily share the exact setup used for a project, ensuring others can replicate your work precisely.
 
-You will then need to add some extra channels (repositories to search for packages), in order to be able to create the environments:
-```bash
-conda config --add channels conda-forge
-conda config --add channels bioconda
-```
+3. Organization: Environments help you keep your workspace clean and organized, making it easier to manage projects and dependencies.
 
-It is also recommended to install Mamba, a conda 'drop-in' replacement, before creating the environments to speed things up:
-```bash
-conda install -y mamba
-```
+### Environments for this workshop
 
+**In addition to installing the packages and their dependencies, MetaWRAP and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. We will be using some pre-configured environments in this workshop that have everything you need to run these tools.**
 
-At this point you might normally start creating your environments with the software packages and dependencies that you intend to use. However, Metawrap and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. A separate Markdown document (@ name.md) is provided for those who wish to do this themselves at a later date.
-
-**We will be using some pre-configured environments in this workshop that have everything you need to run these tools.**
 
 ## Check the environments are set up correctly
 
@@ -129,15 +121,18 @@ If it does, then METABOLIC is ready to be used.
 conda deactivate
 ```
 
-## Clone this repository to your own space on Maxwell
+## Clone (copy) this repository to your own space on Maxwell
 
 This will give you environment files and the scripts needed to run the analysis (which will be uploaded AFTER the workshop, to force you to write them yourself for now.)
 
-Navigate to somewhere sensible
+Navigate to somewhere sensible:
 ```bash
 cd /uoa/scratch/users/"$USER"
 ```
+*Note: you do not need to change "$USER" here, this will automatically use your correct username.*
 
+
+Clone the repository using:
 ```bash
 git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 ```
@@ -145,7 +140,7 @@ git clone https://github.com/biomoff/UoA_Metagenomics_Workshop
 
 ---
 
-# Get the Raw Data
+# 0. Get the Raw Data
 
 A small metagenomics dataset has been prepared for this workshop. Navigate to the workshop folder
 ```bash
@@ -165,6 +160,9 @@ You should now have a directory called `0_RAW-READS` containing some metagenomic
 > B_2.fastq  
 
 
+These are the forward (`_1`) and reverse (`_2`) reads for 2 metagenome samples (`A` and `B`). You can imagine these as being, for example, 2 different soil samples or samples from 2 different patients.
+
+
 Verify that what you have matches the above:
 ```bash
 ls -l 0_RAW-READS/
@@ -174,7 +172,7 @@ ls -l 0_RAW-READS/
 
 ---
 
-# Quality Control using Metawrap's Read QC module
+# 1. Quality Control using Metawrap's Read QC module
 
 Before we can proceed with any sort of analysis, we need to do some quality control on the data we have.
 
@@ -220,9 +218,9 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
@@ -310,7 +308,7 @@ post-QC reads:
 
 ---
 
-# Assembling the reads into Contigs using Metawrap's Assembly module
+# 2. Assembling the reads into Contigs using Metawrap's Assembly module
 
 
 Now that we have high quality reads, we need to assemble them into contigs using Metawrap's `assembly` module.
@@ -358,9 +356,9 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
@@ -483,7 +481,7 @@ and like this for sample B:
 
 ---
 
-# Binning into MAGs using Metawrap's Binning module
+# 3. Binning into MAGs using Metawrap's Binning module
 
 Binning is a crucial step in assembling MAGs from metagenomics data, and involves the placing of contigs into different bins based on taxonomy-informed or taxonomic indepedent methods. Taxonomic indepedent methods use GC content, K-mer frequencies, read depth, and co-variation of abundance across different samples to assign contigs to bins. Here we will be using [Maxbin2](https://doi.org/10.1093/bioinformatics/btv638), which uses tetranucleotide frequences, and [MetaBAT2](https://doi.org/10.7717/peerj.7359), which uses a graph-based approach on contig similarity.
 
@@ -534,9 +532,9 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
@@ -640,7 +638,7 @@ ls -l 3_INITIAL-BINNING/A/metabat2_bins
 
 ---
 
-# Refining bins using Metawrap's Bin Refinement module
+# 4. Refining bins using Metawrap's Bin Refinement module
 
 **As we mentioned above, Metawrap uses multiple binners and then combines their output to create consolidated bins that are better than those produced by any single algorithm. We will use Metawrap's `bin_refinement` module to do this.**
 
@@ -681,9 +679,9 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
@@ -813,7 +811,7 @@ cat 4_BIN-REFINEMENT/B/metawrap_50_10_bins.stats
 
 ---
 
-# Reassembling bins using Metawrap's Reassemble_bins module
+# 5. Reassembling bins using Metawrap's Reassemble_bins module
 
 The consolidated bin set can be further improved in a lot of cases by reassembling the bins by collecting the reads belonging to each bin, then reassembling them separately. We will use Metawrap's `reassemble_bins` module to accomplish this.
 
@@ -857,9 +855,9 @@ It is also good practice to note which version of the package you are using the 
 ### Adding code for loading miniconda and activating the correct environment
 Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/Metawrap-v1.3.2
 
 
@@ -972,7 +970,7 @@ ls -l 5_BIN-REASSEMBLY/B/reassembled_bins/*.fa
 
 --- 
 
-# Functionally annotating MAGs using METABOLIC
+# 6. Functionally annotating MAGs using METABOLIC
 
 [METABOLIC](https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-021-01213-8) allows reconstruction of cell metabolism using genomes (including MAGs) as input. This can be done on both a community and individual genome level. Here we will be using METABOLIC in 'community' mode (`METABOLIC-C`), which should allow us to visualise the differences in function between our communities.
 
@@ -1034,11 +1032,11 @@ It is also good practice to note which version of the package you are using the 
 ```
 
 ### Adding code for loading miniconda and activating the correct environment
-Next, we need to make sure that our job is using the environment that we made, so that it has access to Metawrap. Add the below to your open file:
+Next, we need to make sure that our job is using the environment that we made, so that it has access to METABOLIC. Add the below to your open file:
 ```bash
-## Source own miniconda3 installation and activate environment
+## Source miniconda3 installation and activate environment
 
-source /uoa/home/"$USER"/miniconda3/etc/profile.d/conda.sh
+source /opt/software/uoa/apps/miniconda3/latest/etc/profile.d/conda.sh
 conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics/envs/METABOLIC-v4.0
 
 
@@ -1189,3 +1187,45 @@ or visualise the communities in each sample using the `blobology` module:
 ![Blobology output showing a scatterplot of each contig with GC content on the X axis and read coverage on the y axis, coloured by taxonomy](images/blobology.png)
 
 Whatever it is you do, always refer to the documentation for [Metawrap](https://github.com/bxlab/metaWRAP/blob/master/Usage_tutorial.md) and [METABOLIC](https://github.com/AnantharamanLab/METABOLIC/wiki) when using them to analyse your data, they are your best guides.
+
+
+# 
+# 
+# Additional notes
+
+## Installing your own instance of miniconda3
+
+**If you want to manage your own version of miniconda, so that you can have more control, follow the steps below**
+
+Details on how to install miniconda are available [here](https://docs.anaconda.com/free/miniconda/#quick-command-line-install)
+
+Below is the quick version pasted from the above link. Make sure to navigate to your home directory first by typing `cd` and hitting Enter, which will take you to your home directory.
+
+Install miniconda:
+```bash
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm -rf ~/miniconda3/miniconda.sh
+~/miniconda3/bin/conda init bash
+
+```
+
+
+If this is the first time you have used conda on Maxwell, you will need to **restart your session by logging out and back in.** 
+
+### Adding channels
+
+You will then need to add some extra channels (repositories to search for packages), in order to be able to create the environments:
+```bash
+conda config --add channels conda-forge
+conda config --add channels bioconda
+```
+
+It is also recommended to install Mamba, a conda 'drop-in' replacement, before creating the environments to speed things up:
+```bash
+conda install -y mamba
+```
+
+
+At this point you might normally start creating your environments with the software packages and dependencies that you intend to use. However, Metawrap and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. A separate Markdown document (@ name.md) is provided for those who wish to do this themselves at a later date.
