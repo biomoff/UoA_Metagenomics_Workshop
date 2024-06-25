@@ -54,6 +54,26 @@ Managing environments with `conda` ensures:
 **In addition to installing the packages and their dependencies, MetaWRAP and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. We will be using some pre-configured environments in this workshop that have everything you need to run these tools.**
 
 
+## Load Miniconda3
+
+Miniconda3 is a minimal installation of conda that is available on Maxwell as a module. We can load it using:
+```bash
+module load miniconda3
+```
+
+We can then ensure that miniconda is available every time we log in by running:
+```bash
+conda init bash
+```
+and
+```bash
+source ~/.bashrc
+```
+
+
+*Note: If you already have a way of using conda on Maxwell that you are happy with, and you are confident enough to fix any conda-related issues that might arise during the use of the materials below, then feel free to skip the above steps.*
+
+
 ## Check the environments are set up correctly
 
 Although we are providing pre-configured environments, we should check to make sure they are working properly for you and can find the databases required.
