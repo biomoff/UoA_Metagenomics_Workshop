@@ -23,7 +23,7 @@ scancel YOUR-JOB-ID
 Obviously swapping 'YOUR-JOB-ID' for the actual job identifier.
 
 
-- **If you lose connection or get lost at any point**
+## If you lose connection or get lost at any point
 
 You can return to the directory we will be running all steps from using:
 ```bash
