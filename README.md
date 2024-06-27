@@ -1034,8 +1034,8 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 
 #SBATCH --partition=uoa-compute
 #SBATCH --time=20:00:00
-#SBATCH --cpus-per-task=40
-#SBATCH --mem-per-cpu=5G
+#SBATCH --cpus-per-task=15
+#SBATCH --mem-per-cpu=4G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=
 
@@ -1106,15 +1106,15 @@ echo "1_READ-QC/B/final_pure_reads_1.fastq,1_READ-QC/B/final_pure_reads_2.fastq"
 
 ```bash 
 ## Run METABOLIC-C on genomes for sample A
-perl "$Metabolic"/METABOLIC-C.pl -t 40 -m-cutoff 0.75 -in-gn "$GenomesA" -r A.txt -kofam-db full -o "$OutputDir"/A
+perl "$Metabolic"/METABOLIC-C.pl -t 15 -m-cutoff 0.75 -in-gn "$GenomesA" -r A.txt -kofam-db full -o "$OutputDir"/A
 
 ## Run METABOLIC-C on genomes for sample B
-perl "$Metabolic"/METABOLIC-C.pl -t 40 -m-cutoff 0.75 -in-gn "$GenomesB" -r B.txt -kofam-db full -o "$OutputDir"/B
+perl "$Metabolic"/METABOLIC-C.pl -t 15 -m-cutoff 0.75 -in-gn "$GenomesB" -r B.txt -kofam-db full -o "$OutputDir"/B
 
 
 ```
 
-Here we are using METABOLIC in community mode `METABOLIC-C`, with 40 threads (`-t 40`). We are using `m-cutoff 0.75` to use a threshold of 75% of genes in a pathway required to be present before a KEGG module is treated as being present (due to low completion rates of MAGs in most cases, these thresholds cannot be 100% in most cases). We are specifying the path to our MAGs using `-in-gn` , and the path to the raw reads using `-r`. We are using the full rather than small KOfam database (`-kofam-db full`). Finally, we are sending the output to the directory we set earlier in the script, `6_METABOLIC` using `-o`.
+Here we are using METABOLIC in community mode `METABOLIC-C`, with 15 threads (`-t 15`). We are using `m-cutoff 0.75` to use a threshold of 75% of genes in a pathway required to be present before a KEGG module is treated as being present (due to low completion rates of MAGs in most cases, these thresholds cannot be 100% in most cases). We are specifying the path to our MAGs using `-in-gn` , and the path to the raw reads using `-r`. We are using the full rather than small KOfam database (`-kofam-db full`). Finally, we are sending the output to the directory we set earlier in the script, `6_METABOLIC` using `-o`.
 *Note: there are many more options that you might wish to use / tune for your own data. You can find this using the `--help` flag.*
 
 
