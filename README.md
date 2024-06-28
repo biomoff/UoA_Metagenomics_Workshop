@@ -547,6 +547,7 @@ It is also good practice to note which version of the package you are using the 
 ```bash
 ### This was written for metawrap version 1.3.2 ###
 
+
 ```
 
 ### Adding code for loading miniconda and activating the correct environment
@@ -693,6 +694,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
 
 ```
 
@@ -869,6 +871,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for metawrap version 1.3.2 ###
+
 
 ```
 
@@ -1048,6 +1051,7 @@ We need to tell the Slurm scheduler how much resource we want to allocate to the
 It is also good practice to note which version of the package you are using the script was written for, in the event that a newer version becomes available. You can add something like the below which will be useful if you use the script later or send it to somebody else to use. Copy and paste it into your open file:
 ```bash
 ### This was written for METABOLIC v4.0 ###
+
 
 ```
 
