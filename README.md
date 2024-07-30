@@ -86,6 +86,7 @@ conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics
 ```
 
 You should see the environment (in brackets) before your username in the command prompt change as below:
+
 ![(base) changes to (Metawrap-v1.3.2) before the command prompt](images/Metawrap-env.png)
 
 Now we need to check that the paths to the databases are configured properly. Verify that the output of:
@@ -118,6 +119,7 @@ conda activate /uoa/scratch/shared/Soil_Microbiology_Group/Training/Metagenomics
 ```
 
 You should see the environment (in brackets) before your username in the command prompt change as below:
+
 ![(base) changes to (METABOLIC-v4.0) before the command prompt](images/METABOLIC-env.png)
 
 Now we need to check that the paths to the databases are configured properly. Verify that the output of:
@@ -321,9 +323,11 @@ Within `pre-QC_report` and `post-QC_report` you would find:
 These QC report HTML files can be inspected by copying them over to your own machine (using WinSCP or other methods) and viewing them in a browser. We will skip that with our data for now, but below is an example of what you might expect to see:
 
 pre-QC reads:
+
 ![pre-QC reads](images/pre-qc.png)
 
 post-QC reads:
+
 ![post-QC reads](images/post-qc.png)
 
 ---
@@ -509,6 +513,7 @@ Binning is a crucial step in assembling MAGs from metagenomics data, and involve
 
 
 Metawrap uses multiple different binning algorithms and combines their output to yield more accurate bins:
+
 ![Metawrap has multiple binning options that it consolidates and refines](images/binning.png)
 
 
@@ -1252,4 +1257,4 @@ conda install -y mamba
 ```
 
 
-At this point you might normally start creating your environments with the software packages and dependencies that you intend to use. However, Metawrap and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. A separate Markdown document (@ name.md) is provided for those who wish to do this themselves at a later date.
+At this point you might normally start creating your environments with the software packages and dependencies that you intend to use. However, Metawrap and METABOLIC are a bit complicated and rely on setting some paths to databases as well as running some setup scripts, which would take too long to do here. A separate Markdown document (@ name.md) will be provided at a later date for those who wish to do this themselves at a later date.
